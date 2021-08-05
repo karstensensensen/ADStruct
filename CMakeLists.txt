@@ -17,8 +17,16 @@ set(FQUE_SRC
     src/FixedQueue.ipp
 )
 
-add_library(${PROJECT_NAME} INTERFACE)
-
-target_include_directories(${PROJECT_NAME} INTERFACE
+add_executable(${PROJECT_NAME}
+    src/main.cpp
     $<IF:$<BOOL:${ADS_FIXED_QUE}>,${FQUE_INCLUDE} ${FQUE_SRC}, >
 )
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+if(${ADS_FIXED_QUE})
+    source_group("FixedQueue/Include" ${FQUE_INCLUDE})
+    source_group("FixedQueue/Src" ${FQUE_SRC})
+endif()
