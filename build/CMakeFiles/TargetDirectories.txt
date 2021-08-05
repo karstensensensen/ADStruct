@@ -1,0 +1,2 @@
+C:/Dev/cpp/libs/ADStruct/build/CMakeFiles/ALL_BUILD.dir
+C:/Dev/cpp/libs/ADStruct/build/CMakeFiles/ZERO_CHECK.dir
