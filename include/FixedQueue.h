@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <concepts>
 
 namespace ADS
 {
@@ -10,116 +12,146 @@ namespace ADS
 	template<typename T>
 	class ConstFixedQueueIterator;
 
-	/*
-	class for containing a fixed size queue
-	if the size of the queue reaches the fixed size
+	namespace Bases
+	{
 
-	it is implemented as a cyclic buffer to prevent the whole queue being copied on every push / pop.
-	meaning the "front" of the queue will not always be the front of the vector.
-	(SIZE = 4)
-	 FRONT    BACK
-	 |        |
-	[1, 2, 3, 4] push 5
-			   |
-			   |
-	 B	F      |
-	 |	|      v
-	[5, 2, 3, 4]
-	*/
+		template<typename TIter, typename T>
+		concept i_iterator_ct = std::input_iterator<TIter> && std::is_convertible_v<typename TIter::value_type, T>;
+
+		/*
+		class for containing a fixed size queue
+		if the size of the queue reaches the fixed size
+
+		it is implemented as a cyclic buffer to prevent the whole queue being copied on every push / pop.
+		meaning the "front" of the queue will not always be the front of the vector.
+
+		(SIZE = 4)
+		 FRONT    BACK
+		 |        |
+		[1, 2, 3, 4] push 5
+				   |
+				   |
+		 B	F      |
+		 |	|      v
+		[5, 2, 3, 4]
+
+		NO ELEMENTS ARE COPIED EXCEPT FOR THE PUSH ARGUMENT
+		*/
+		template<typename T>
+		class FixedQueueBase
+		{
+		public:
+			FixedQueueBase(T* data, size_t size)
+				: m_data(data), m_fixed_size(size) {}
+
+			T& front() { return m_data[m_front_index]; }
+			T front() const { return m_data[m_front_index]; }
+
+			void push_back(T elem);
+			template<i_iterator_ct<T> TIter>
+			void push_back(TIter begin, TIter end);
+			template<typename TOther> requires std::is_convertible_v<TOther, T>
+			void push_back(std::initializer_list<TOther> list);
+			template<typename TOther> requires std::is_convertible_v<TOther, T>
+			void push_back(FixedQueueBase<TOther>& other);
+			template<typename TOther> requires std::is_convertible_v<TOther, T>
+			void push_back(const FixedQueueBase<TOther>& other);
+			template<typename TOther>
+			void push_back(const std::vector<TOther>& vec) { push_back(vec.begin(), vec.end()); };
+
+			inline void push(T elem) { push_back(elem); };
+			template<i_iterator_ct<T> TIter>
+			inline void push(TIter begin, TIter end) { push_back(begin, end); };
+			template<typename TOther>
+			inline void push(std::initializer_list<TOther> list) { push_back(list); };
+			template<typename TOther>
+			inline void push(const std::vector<TOther>& vec) { push_back(vec); };
+
+			T& back() { return m_data[(m_front_index + m_size) % m_fixed_size]; }
+			T back() const { return m_data[(m_front_index + m_size) % m_fixed_size]; }
+
+			void pop_front();
+			inline void pop() { pop_front(); };
+
+			size_t size() const { return m_fixed_size; };
+			size_t length() const { return m_size; };
+
+			T& operator[](size_t index);
+			T operator[](size_t index) const;
+
+			// returns the avrage of all the elements in the queue
+			//
+			// TAvg = the data type of the variable that stores the avrage.
+			// should be large enough to contain the sum of all the elements.
+			// if no such datatype is present, use avgHuge instead.
+			template<typename TAvg = T> requires requires(T x) { x + x / x; }
+			T avg();
+
+			// returns the avrage of all the elements in the queue using a less precise method, but has no size cap.
+			//
+			// TAvg = the data type that stores the avrage.
+			// a floating point data type is recommended since this method relies on dividing each element before adding them to the result
+			template<typename TAvg = float> requires requires(T x) { x + x / x; }
+			T avgHuge();
+
+			// sets size to 0 and puts front_index at the start of the m_data array
+			void clear();
+
+			FixedQueueIterator<T> begin();
+			ConstFixedQueueIterator<T> begin() const;
+
+			FixedQueueIterator<T> end();
+			ConstFixedQueueIterator<T> end() const;
+
+			// pushes the element to the que
+			void operator<<(T elem) { push_back(elem); }
+			template<typename TOther>
+			void operator<<(const std::vector<TOther>& vec) { push_back(vec); }
+			template<typename TOther> requires std::is_convertible_v<TOther, T>
+			void operator<<(FixedQueueBase<TOther>& other) { push_back(other); }
+			template<typename TOther> requires std::is_convertible_v<TOther, T>
+			void operator<<(const FixedQueueBase<TOther>& other) { push_back(other); }
+
+
+		protected:
+			size_t projectIndex(size_t index) const;
+
+			size_t m_fixed_size;
+			size_t m_size = 0;
+
+			size_t m_front_index = 0;
+
+			T* m_data = nullptr;
+		};
+	}
+
+	
 	template<typename T>
-	class FixedQueue
+	class FixedQueue: public Bases::FixedQueueBase<T>
 	{
 	public:
 		FixedQueue() = default;
 		FixedQueue(size_t size);
 
-		T& front() { return m_data[m_front_index]; }
-		T front() const { return m_data[m_front_index]; }
-
-		void push_back(T elem);
-		inline void push(T elem) { push_back(elem); };
-
-		T& back() { return m_data[(m_front_index + m_size) % m_fixed_size]; }
-		T back() const { return m_data[(m_front_index + m_size) % m_fixed_size]; }
-
-		void pop_front();
-		inline void pop() { pop_front(); };
-
-		size_t size() const { return m_fixed_size; };
-		size_t length() const { return m_size; };
 		void resize(size_t new_size);
-
-		T& operator[](size_t index);
-		T operator[](size_t index) const;
-
-		// sets size to 0 and puts front_index at the start of the m_data array
-		void clear();
-
-		FixedQueueIterator<T> begin();
-		ConstFixedQueueIterator<T> begin() const;
-
-		FixedQueueIterator<T> end();
-		ConstFixedQueueIterator<T> end() const;
-
-		// pushes the element to the que
-		void operator<<(T elem) { push_back(elem); }
 
 	protected:
 
-		size_t projectIndex(size_t index) const;
-
-		size_t m_fixed_size;
-		size_t m_size = 0;
-
-		size_t m_front_index = 0;
-
 		T* m_data = nullptr;
+		using Bases::FixedQueueBase<T>::m_fixed_size;
+		using Bases::FixedQueueBase<T>::m_size;
+		using Bases::FixedQueueBase<T>::m_front_index;
 	};
 
 	// a static version of FixedQueue
 	template<typename T, size_t n>
-	class SFixedQueue
+	class SFixedQueue: public Bases::FixedQueueBase<T>
 	{
 	public:
-		SFixedQueue() = default;
-
-		T& front() { return m_data[m_front_index]; }
-		T front() const { return m_data[m_front_index]; }
-
-		void push_back(T elem);
-		inline void push(T elem) { push_back(elem); };
-
-		T& back() { return m_data[(m_front_index + m_size) % n]; }
-		T back() const { return m_data[(m_front_index + m_size) % n]; }
-
-		void pop_front();
-		inline void pop() { pop_front(); };
-
-		// sets size to 0 and puts front_index at the start of the m_data array
-		void clear();
-
-		size_t size() const { return n; };
-		size_t length() const { return m_size; };
-
-		T& operator[](size_t index);
-		T operator[](size_t index) const;
-
-		FixedQueueIterator<T> begin();
-		ConstFixedQueueIterator<T> begin() const;
-
-		FixedQueueIterator<T> end();
-		ConstFixedQueueIterator<T> end() const;
-
-		// pushes the element to the que
-		void operator<<(T elem) { push_back(elem); }
+		SFixedQueue()
+			: Bases::FixedQueueBase<T>(m_data, n) {};
 
 	protected:
-
-		size_t projectIndex(size_t index) const;
-
-		size_t m_size = 0;
-
-		size_t m_front_index = 0;
 
 		T m_data[n];
 	};
@@ -193,16 +225,10 @@ namespace ADS
 
 // stores the front into target and pops the que
 template<typename T>
-void operator<<(T& target, ADS::FixedQueue<T>& que);
-
-template<typename T, size_t n>
-void operator<<(T& target, ADS::SFixedQueue<T, n>& que);
+void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& que);
 
 template<typename T>
-std::ostream& operator<<(std::ostream& stream, const ADS::FixedQueue<T>& queue);
-
-template<typename T, size_t n>
-std::ostream& operator<<(std::ostream& stream, const ADS::SFixedQueue<T, n>& queue);
+std::ostream& operator<<(std::ostream& stream, const ADS::Bases::FixedQueueBase<T>& queue);
 
 #include "FixedQueue.ipp"
 
