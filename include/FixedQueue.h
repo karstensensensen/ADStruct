@@ -76,6 +76,9 @@ namespace ADS
 			size_t size() const { return m_fixed_size; };
 			size_t length() const { return m_size; };
 
+			bool full() { return length() == size(); }
+			bool empty() { return length() == 0; }
+
 			T& operator[](size_t index);
 			T operator[](size_t index) const;
 
