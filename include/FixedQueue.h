@@ -103,6 +103,19 @@ namespace ADS
 			template<typename TAvg = float> requires requires(T x) { x + x / x; }
 			T avgHuge();
 
+			// returns the maximum value inside the queue from offset.
+			T max(size_t offset = 0);
+			// returns the index of the minimum value.
+			// if there are more than one instance of the minimum value, the first minimum value from offset found will be returned.
+			size_t iOfMax(size_t offset = 0);
+
+			// returns the minimum value inside the queue from offset.
+			T min(size_t offset = 0);
+			// returns the index of the minimum value.
+			// if there are more than one instance of the maximum value, the first maximum value from offset found will be returned.
+			size_t iOfMin(size_t offset = 0);
+
+
 			// sets size to 0 and puts front_index at the start of the m_data array
 			void clear();
 
