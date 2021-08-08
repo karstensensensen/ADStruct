@@ -194,6 +194,12 @@ namespace ADS
 		FixedQueueIterator& operator++();
 		FixedQueueIterator operator++(int);
 
+		FixedQueueIterator operator+(size_t offset);
+		FixedQueueIterator& operator+=(size_t offset);
+
+		FixedQueueIterator operator-(size_t offset);
+		FixedQueueIterator& operator-=(size_t offset);
+
 		FixedQueueIterator& operator--();
 		FixedQueueIterator operator--(int);
 

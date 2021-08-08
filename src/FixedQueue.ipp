@@ -141,7 +141,7 @@ namespace ADS
 		template<typename T>
 		T FixedQueueBase<T>::max(size_t offset)
 		{
-			return operator()[iOfMax(offset)];
+			return operator[](iOfMax(offset));
 		}
 
 		template<typename T>
@@ -170,7 +170,7 @@ namespace ADS
 		template<typename T>
 		inline T FixedQueueBase<T>::min(size_t offset)
 		{
-			return operator()[iOfMin(offset)];
+			return operator[](iOfMin(offset));
 		}
 		
 		template<typename T>
@@ -279,9 +279,38 @@ namespace ADS
 	{
 		FixedQueueIterator<T> tmp = *this;
 
-		*this++;
+		++*this;
 
 		return tmp;
+	}
+
+	template<typename T>
+	FixedQueueIterator<T> FixedQueueIterator<T>::operator+(size_t offset)
+	{
+		FixedQueueIterator<T> result = *this;
+
+		result += offset;
+
+		return result;
+	}
+
+	template<typename T>
+	FixedQueueIterator<T>& FixedQueueIterator<T>::operator+=(size_t offset)
+	{
+		if (offset > 0)
+		{
+			past_self = true;
+
+			size_t diff = m_q_back - m_ptr;
+
+			// if the distance between the current pointer and the end of the queue memory is less than offset, it must cycle back to the start of the queue memory.
+			if (diff < offset)
+				m_ptr = m_q_front + offset - diff;
+			else
+				m_ptr += offset;
+		}
+
+		return *this;
 	}
 
 	template<typename T>
@@ -301,9 +330,38 @@ namespace ADS
 	{
 		FixedQueueIterator<T> tmp = *this;
 
-		*this--;
+		--*this;
 
 		return tmp;
+	}
+
+	template<typename T>
+	FixedQueueIterator<T> FixedQueueIterator<T>::operator-(size_t offset)
+	{
+		FixedQueueIterator<T> result = *this;
+
+		result += offset;
+
+		return result;
+	}
+
+	template<typename T>
+	FixedQueueIterator<T>& FixedQueueIterator<T>::operator-=(size_t offset)
+	{
+		if (offset > 0)
+		{
+			past_self = true;
+
+			size_t diff = m_ptr - m_q_front;
+
+			// if the distance between the current pointer and the start of the queue memory is less than offset, it must cycle back to the end of the queue memory.
+			if (diff < offset)
+				m_ptr = m_q_back - offset + diff;
+			else
+				m_ptr -= offset;
+		}
+
+		return *this;
 	}
 
 	template<typename T>
