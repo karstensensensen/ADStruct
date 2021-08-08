@@ -1,6 +1,7 @@
 #include "FixedQueue.h"
 #include <cassert>
 #include <numeric>
+#include "..\include\FixedQueue.h"
 
 
 namespace ADS
@@ -109,13 +110,7 @@ namespace ADS
 			return carr;
 		}
 
-		template<typename T>
-		void FixedQueueBase<T>::clear()
-		{
-			m_size = 0;
-			m_front_index = 0;
-		}
-
+		
 		template<typename T>
 		template<typename TAvg> requires requires(T x) { x + x / x; }
 		T FixedQueueBase<T>::avg()
@@ -138,6 +133,70 @@ namespace ADS
 			}
 
 			return (T) avg;
+		}
+
+		template<typename T>
+		T FixedQueueBase<T>::max(size_t offset)
+		{
+			return operator()[iOfMax(offset)];
+		}
+
+		template<typename T>
+		size_t FixedQueueBase<T>::iOfMax(size_t offset)
+		{
+			size_t i = 0;
+			size_t max_i = 0;
+			T* max_val = &*(begin() + offset);
+
+			for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+			{
+				if (*it > *max_val)
+				{
+					// prevent large objects from being copied, so hold a pointer instead.
+					max_val = &*it;
+					max_i = i;
+				}
+
+				i++;
+			}
+
+			return max_i;
+		}
+
+
+		template<typename T>
+		inline T FixedQueueBase<T>::min(size_t offset)
+		{
+			return operator()[iOfMin(offset)];
+		}
+		
+		template<typename T>
+		size_t FixedQueueBase<T>::iOfMin(size_t offset)
+		{
+			size_t i = 0;
+			size_t min_i = 0;
+			T* min_val = &*(begin() + offset);
+
+			for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+			{
+				if (*it < *min_val)
+				{
+					// prevent large objects from being copied, so hold a pointer instead.
+					min_val = &*it;
+					min_i = i;
+				}
+
+				i++;
+			}
+
+			return min_i;
+		}
+
+		template<typename T>
+		void FixedQueueBase<T>::clear()
+		{
+			m_size = 0;
+			m_front_index = 0;
 		}
 
 		template<typename T>
