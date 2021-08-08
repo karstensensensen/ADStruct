@@ -88,25 +88,28 @@ namespace ADS
 		}
 
 		template<typename T>
-		std::vector<T> FixedQueueBase<T>::toVector() const
+		template<typename TCast> requires std::is_convertible_v<T, TCast>
+		std::vector<TCast> FixedQueueBase<T>::toVector() const
 		{
-			std::vector<T> result;
+			std::vector<TCast> result;
 			result.reserve(length());
 
 			for (const T& val : *this)
-				result.pushback(val);
+				result.pushback((TCast)val);
 
 			return result;
 		}
 
 		template<typename T>
-		std::unique_ptr<T> FixedQueueBase<T>::toCarr() const
+		template<typename TCast> requires std::is_convertible_v<T, TCast>
+		std::unique_ptr<TCast> FixedQueueBase<T>::toCarr() const
 		{
-			T* carr = new T[length()];
+			TCast* carr = new TCast[length()];
 
-			std::copy(begin(), end(), carr);
+			for (size_t i = 0; i < length(); i++)
+				carr[i] = (TCast)this->operator[](i);
 
-			return carr;
+			return std::unique_ptr<TCast>(carr);
 		}
 
 		template<typename T>

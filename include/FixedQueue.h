@@ -83,8 +83,10 @@ namespace ADS
 			T& operator[](size_t index);
 			T operator[](size_t index) const;
 
-			std::vector<T> toVector() const;
-			std::unique_ptr<T> toCarr() const;
+			template<typename TCast = T> requires std::is_convertible_v<T, TCast>
+			std::vector<TCast> toVector() const;
+			template<typename TCast = T> requires std::is_convertible_v<T, TCast>
+			std::unique_ptr<TCast> toCarr() const;
 
 			// returns the avrage of all the elements in the queue
 			//
