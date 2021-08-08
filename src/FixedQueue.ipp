@@ -2,6 +2,7 @@
 #include <cassert>
 #include <numeric>
 
+
 namespace ADS
 {
 	namespace Bases
@@ -87,6 +88,28 @@ namespace ADS
 		}
 
 		template<typename T>
+		std::vector<T> FixedQueueBase<T>::toVector() const
+		{
+			std::vector<T> result;
+			result.reserve(length());
+
+			for (const T& val : *this)
+				result.pushback(val);
+
+			return result;
+		}
+
+		template<typename T>
+		std::unique_ptr<T> FixedQueueBase<T>::toCarr() const
+		{
+			T* carr = new T[length()];
+
+			std::copy(begin(), end(), carr);
+
+			return carr;
+		}
+
+		template<typename T>
 		void FixedQueueBase<T>::clear()
 		{
 			m_size = 0;
@@ -114,7 +137,7 @@ namespace ADS
 				avg += (TAvg)elem / (TAvg)length();
 			}
 
-			return avg;
+			return (T) avg;
 		}
 
 		template<typename T>

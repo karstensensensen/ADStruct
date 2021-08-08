@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <concepts>
+#include <memory>
 
 namespace ADS
 {
@@ -82,6 +83,9 @@ namespace ADS
 			T& operator[](size_t index);
 			T operator[](size_t index) const;
 
+			std::vector<T> toVector() const;
+			std::unique_ptr<T> toCarr() const;
+
 			// returns the avrage of all the elements in the queue
 			//
 			// TAvg = the data type of the variable that stores the avrage.
@@ -133,14 +137,13 @@ namespace ADS
 	class FixedQueue: public Bases::FixedQueueBase<T>
 	{
 	public:
-		FixedQueue() = default;
-		FixedQueue(size_t size);
+		FixedQueue(size_t size = 0);
 
 		void resize(size_t new_size);
 
 	protected:
 
-		T* m_data = nullptr;
+		using Bases::FixedQueueBase<T>::m_data;
 		using Bases::FixedQueueBase<T>::m_fixed_size;
 		using Bases::FixedQueueBase<T>::m_size;
 		using Bases::FixedQueueBase<T>::m_front_index;
