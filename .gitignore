@@ -377,3 +377,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# visual studio code files
+.vscode/
+.DS_store
