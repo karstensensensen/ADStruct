@@ -71,8 +71,8 @@ namespace ADS
 			T& back() { return m_data[(m_front_index + m_size) % m_fixed_size]; }
 			T back() const { return m_data[(m_front_index + m_size) % m_fixed_size]; }
 
-			void pop_front();
-			inline void pop() { pop_front(); };
+			void pop_front(size_t elem_count = 1);
+			inline void pop(size_t elem_count = 1) { pop_front(elem_count); };
 
 			size_t size() const { return m_fixed_size; };
 			size_t length() const { return m_size; };

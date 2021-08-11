@@ -64,13 +64,13 @@ namespace ADS
 			}
 
 		template<typename T>
-		void FixedQueueBase<T>::pop_front()
+		void FixedQueueBase<T>::pop_front(size_t elem_count)
 		{
-			assert(m_size > 0);
+			assert(m_size > 0 && elem_count <= length());
 
-			m_size--;
+			m_size -= elem_count;
 
-			m_front_index++;
+			m_front_index += elem_count;
 			m_front_index %= m_fixed_size;
 		}
 
