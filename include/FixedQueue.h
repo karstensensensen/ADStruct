@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
 #include <concepts>
 #include <memory>
 
@@ -59,6 +60,8 @@ namespace ADS
 			void push_back(const FixedQueueBase<TOther>& other);
 			template<typename TOther>
 			void push_back(const std::vector<TOther>& vec) { push_back(vec.begin(), vec.end()); };
+			template<typename TOther, size_t n>
+			void push_back(const std::array<TOther, n>& arr) { push_back(arr.begin(), arr.end()); };
 
 			inline void push(T elem) { push_back(elem); };
 			template<i_iterator_ct<T> TIter>
@@ -67,6 +70,8 @@ namespace ADS
 			inline void push(std::initializer_list<TOther> list) { push_back(list); };
 			template<typename TOther>
 			inline void push(const std::vector<TOther>& vec) { push_back(vec); };
+			template<typename TOther, size_t n>
+			inline void push(const std::array<TOther, n>& arr) { push_back(arr); };
 
 			T& back() { return m_data[(m_front_index + m_size) % m_fixed_size]; }
 			T back() const { return m_data[(m_front_index + m_size) % m_fixed_size]; }
@@ -129,6 +134,8 @@ namespace ADS
 			void operator<<(T elem) { push_back(elem); }
 			template<typename TOther>
 			void operator<<(const std::vector<TOther>& vec) { push_back(vec); }
+			template<typename TOther, size_t n>
+			void operator<<(const std::array<TOther, n>& arr) { push_back(arr); }
 			template<typename TOther> requires std::is_convertible_v<TOther, T>
 			void operator<<(FixedQueueBase<TOther>& other) { push_back(other); }
 			template<typename TOther> requires std::is_convertible_v<TOther, T>
@@ -253,6 +260,13 @@ namespace ADS
 // stores the front into target and pops the que
 template<typename T>
 void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& que);
+
+
+template<typename T>
+void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& que);
+
+template<typename T, size_t n>
+void operator<<(std::array<T, n>& target, ADS::Bases::FixedQueueBase<T>& que);
 
 template<typename T>
 std::ostream& operator<<(std::ostream& stream, const ADS::Bases::FixedQueueBase<T>& queue);

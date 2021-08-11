@@ -454,7 +454,21 @@ void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& queue)
 }
 
 template<typename T>
-inline std::ostream& operator<<(std::ostream& stream, const ADS::Bases::FixedQueueBase<T>& queue)
+void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& que)
+{
+	std::copy(que.begin(), que.begin() + std::min(target.size(), que.length()), target.begin());
+	que.pop_front(target.size());
+}
+
+template<typename T, size_t n>
+void operator<<(std::array<T, n>& target, ADS::Bases::FixedQueueBase<T>& que)
+{
+	std::copy(que.begin(), que.begin() + std::min(n, que.length()), target.begin());
+	que.pop_front(n);
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const ADS::Bases::FixedQueueBase<T>& queue)
 {
 	for (const T& val : queue)
 		stream << val << ' ';
