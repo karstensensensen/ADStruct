@@ -69,7 +69,7 @@ namespace ADS
         for(byte* ptr = m_arena; ptr < m_arena + m_arena_size;)
         {   
             // if the space between two addresses is more than or equal to the requested size, return the adress to the end of the first memoryblock + 1
-            if(ptr - last >= size)
+            if(size_t(ptr - last) >= size)
                 return last;
             
 
@@ -89,7 +89,7 @@ namespace ADS
         }
 
         // if no memory block were allocated infront of it, use the end of the arena as the start of the next memory block
-        if(m_arena + m_arena_size - last >= size)
+        if(size_t(m_arena + m_arena_size - last) >= size)
             return last;
         else
             return nullptr;

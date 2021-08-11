@@ -264,15 +264,15 @@ namespace ADS
 }
 
 // stores the front into target and pops the que
-template<typename T>
-void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& que);
+template<typename T, typename TVar>
+void operator<<(TVar& target, ADS::Bases::FixedQueueBase<T>& que);
 
 
-template<typename T>
-void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& que);
+template<typename T, typename TVec>
+void operator<<(std::vector<TVec>& target, ADS::Bases::FixedQueueBase<T>& que);
 
-template<typename T, size_t n>
-void operator<<(std::array<T, n>& target, ADS::Bases::FixedQueueBase<T>& que);
+template<typename T, typename TVec, size_t n>
+void operator<<(std::array<TVec, n>& target, ADS::Bases::FixedQueueBase<T>& que);
 
 template<typename T>
 std::ostream& operator<<(std::ostream& stream, const ADS::Bases::FixedQueueBase<T>& queue);

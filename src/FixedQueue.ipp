@@ -504,26 +504,26 @@ namespace ADS
 	}
 }
 
-template<typename T>
-void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& queue)
+template<typename T, typename TVar>
+void operator<<(TVar& target, ADS::Bases::FixedQueueBase<T>& queue)
 {
 	target = queue.front();
 	queue.pop();
 }
 
-template<typename T>
-void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& queue)
+template<typename T, typename TVec>
+void operator<<(std::vector<TVec>& target, ADS::Bases::FixedQueueBase<T>& queue)
 {
-	size_t out_size = std::min(target.size(), que.length());
+	size_t out_size = std::min(target.size(), queue.length());
 	for (size_t i = 0; i < out_size; i++)
 		target[i] = queue[i];
 	queue.pop_front(out_size);
 }
 
-template<typename T, size_t n>
-void operator<<(std::array<T, n>& target, ADS::Bases::FixedQueueBase<T>& que)
+template<typename T, typename TVec, size_t n>
+void operator<<(std::array<TVec, n>& target, ADS::Bases::FixedQueueBase<T>& queue)
 {
-	size_t out_size = std::min(n, que.length());
+	size_t out_size = std::min(n, queue.length());
 	for (size_t i = 0; i < out_size; i++)
 		target[i] = queue[i];
 	queue.pop_front(out_size);
