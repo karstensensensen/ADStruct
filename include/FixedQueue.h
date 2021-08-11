@@ -240,6 +240,12 @@ namespace ADS
 		ConstFixedQueueIterator& operator++();
 		ConstFixedQueueIterator operator++(int);
 
+		ConstFixedQueueIterator operator+(size_t offset);
+		ConstFixedQueueIterator& operator+=(size_t offset);
+
+		ConstFixedQueueIterator operator-(size_t offset);
+		ConstFixedQueueIterator& operator-=(size_t offset);
+
 		ConstFixedQueueIterator& operator--();
 		ConstFixedQueueIterator operator--(int);
 
