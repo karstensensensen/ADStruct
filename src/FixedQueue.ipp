@@ -400,7 +400,7 @@ namespace ADS
 	{
 		ConstFixedQueueIterator<T> tmp = *this;
 
-		++* this;
+		++*this;
 
 		return tmp;
 	}
@@ -451,7 +451,7 @@ namespace ADS
 	{
 		ConstFixedQueueIterator<T> tmp = *this;
 
-		--* this;
+		--*this;
 
 		return tmp;
 	}
@@ -512,17 +512,21 @@ void operator<<(T& target, ADS::Bases::FixedQueueBase<T>& queue)
 }
 
 template<typename T>
-void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& que)
+void operator<<(std::vector<T>& target, ADS::Bases::FixedQueueBase<T>& queue)
 {
-	std::copy(que.begin(), que.begin() + std::min(target.size(), que.length()), target.begin());
-	que.pop_front(target.size());
+	size_t out_size = std::min(target.size(), que.length());
+	for (size_t i = 0; i < out_size; i++)
+		target[i] = queue[i];
+	queue.pop_front(out_size);
 }
 
 template<typename T, size_t n>
 void operator<<(std::array<T, n>& target, ADS::Bases::FixedQueueBase<T>& que)
 {
-	std::copy(que.begin(), que.begin() + std::min(n, que.length()), target.begin());
-	que.pop_front(n);
+	size_t out_size = std::min(n, que.length());
+	for (size_t i = 0; i < out_size; i++)
+		target[i] = queue[i];
+	queue.pop_front(out_size);
 }
 
 template<typename T>
