@@ -10,10 +10,10 @@
 namespace ADS
 {
     typedef unsigned char byte;
-    
+
     class Arena;
 
-    
+
 
     // an arena always having the same memory footprint no matter how many allocations are made.
     // 
@@ -48,14 +48,14 @@ namespace ADS
         // resizes the size of the memory arena to new_arena_size (in bytes).
         // all data will be cleared on a resize, so using pointers returned by alloc before a resize is undefined behavior.
         void resize(size_t new_arena_size);
-        
+
         // returns wether the address passed was returned by Alloc and is not freed.
         bool isValid(void* address);
 
         // flushes every value of every byte in the memory arena to the stream passed.
         void memoryDump(std::ostream& stream)
         {
-            for(size_t i = 0; i < m_arena_size; i++)
+            for (size_t i = 0; i < m_arena_size; i++)
                 stream << (int)m_arena[i] << ' ';
             stream << '\n';
         }
@@ -79,6 +79,7 @@ namespace ADS
         byte* findFreeAddress(size_t size);
 
     };
+    
 
     // a structure containing information about a specific memory block
     struct MemBlockInfo
@@ -86,7 +87,10 @@ namespace ADS
         byte* start;
         byte* end;
 
-        size_t size() {return (size_t)(end - start);}
+        size_t size() { return (size_t)(end - start); }
+
+        bool operator==(const MemBlockInfo& other) { return start == other.start && end == other.end; }
+        bool operator!=(const MemBlockInfo& other) { return !(*this == other); }
     };
 
     class ModArena;
@@ -100,12 +104,12 @@ namespace ADS
 
         // used to make sure m_pos is valid
         const MemBlockInfo* m_mem_info;
-        
+
         // stores the position inside the memory block
         T* m_pos;
 
-        ArenaPtr(MemBlockInfo* mem_info): m_mem_info(mem_info), m_pos((T*) m_mem_info->start) {};
-        ArenaPtr(): m_mem_info(nullptr), m_pos(nullptr) {}
+        ArenaPtr(MemBlockInfo* mem_info) : m_mem_info(mem_info), m_pos((T*)m_mem_info->start) {};
+        ArenaPtr() : m_mem_info(nullptr), m_pos(nullptr) {}
 
     public:
 
@@ -150,11 +154,11 @@ namespace ADS
 
         ArenaPtr& operator+=(size_t val);
         ArenaPtr& operator-=(size_t val);
-        
+
         const T* start() const { return (T*)m_mem_info->start; }
         const T* end() const { return (T*)m_mem_info->end; }
 
-        const MemBlockInfo* blockInfo() const { return m_mem_info; } 
+        const MemBlockInfo* blockInfo() const { return m_mem_info; }
 
         // sets the position of the pointer to the start of the memory block.
         // should be called if the arena has been resized or defragmented.
@@ -163,7 +167,7 @@ namespace ADS
 
     // void specialization for ArenaPtr
     template<>
-    class ArenaPtr<void>: public ArenaPtr<char>
+    class ArenaPtr<void> : public ArenaPtr<char>
     {
     public:
         ArenaPtr(ArenaPtr<void>& other)
@@ -204,7 +208,7 @@ namespace ADS
         // pointers returned by alloc will still be usable if they are reset.
         // memory will be defragmeneted after a resize.
         void resize(size_t new_arena_size);
-        
+
         // removes unused memory inbetween memory blocks.
         // this operation functions by moving memory blocks next to each other by copying them, so this is an expensive operation.
         void defragment();
@@ -212,11 +216,11 @@ namespace ADS
         // flushes every value of every byte in the memory arena, to the stream passed.
         void memoryDump(std::ostream& stream)
         {
-            for(size_t i = 0; i < m_arena_size; i++)
+            for (size_t i = 0; i < m_arena_size; i++)
                 stream << (int)m_arena[i] << ' ';
             stream << '\n';
         }
-    
+
     private:
 
         // ARENA STRUCTURE DEFINITION:
@@ -242,7 +246,7 @@ namespace ADS
 
     template<typename T>
     using APtr = ArenaPtr<T>;
-}
+};
 
 #include "StaticArena.ipp"
 #include "ModArena.ipp"

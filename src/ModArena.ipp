@@ -1,7 +1,7 @@
 #include "Arena.h"
 #include <stdlib.h>
 
-namespace MemArena
+namespace ADS
 {
     template<typename T>
     ArenaPtr<T> ModArena::alloc(size_t amount)

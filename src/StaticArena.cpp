@@ -1,9 +1,12 @@
 #include "Arena.h"
 
-namespace MemArena
+namespace ADS
 {
     StaticArena::StaticArena(size_t arena_size)
-        : m_arena(new byte[arena_size]), m_arena_size(arena_size) {}
+        : m_arena(new byte[arena_size]), m_arena_size(arena_size)
+    {
+        memset(m_arena, NULL, m_arena_size);
+    }
 
 
     void StaticArena::free(void* address)
@@ -12,7 +15,7 @@ namespace MemArena
 
         size_t block_size = ptrSize((byte*) address);
 
-        memset((byte*) address - sizeof(size_t), 0, block_size + 1);
+        memset((byte*) address - sizeof(size_t), NULL, block_size + 1);
 
         address = nullptr;
     }
