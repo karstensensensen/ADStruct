@@ -1,6 +1,7 @@
 #include "FixedQueue.h"
 #include <cassert>
 #include <numeric>
+#include <limits>
 #include "..\include\FixedQueue.h"
 
 
@@ -141,58 +142,93 @@ namespace ADS
 		template<typename T>
 		T FixedQueueBase<T>::max(size_t offset)
 		{
-			return operator[](iOfMax(offset));
+			if (length() > offset)
+				return operator[](iOfMax(offset));
+			else if (std::numeric_limits<T>::is_specialized)
+			{
+				if (std::numeric_limits<T>::has_signaling_NaN)
+					return std::numeric_limits<T>::signaling_NaN();
+				else
+					return std::numeric_limits<T>::max();
+			}
+			else
+				return T(SIZE_MAX);
 		}
 
 		template<typename T>
 		size_t FixedQueueBase<T>::iOfMax(size_t offset)
 		{
-			size_t i = 0;
-			size_t max_i = 0;
-			T* max_val = &*(begin() + offset);
-
-			for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+			if (length() > offset)
 			{
-				if (*it > *max_val)
+				size_t i = 0;
+				size_t max_i = 0;
+				T* max_val = &*(begin() + offset);
+
+				if (begin() + offset != end())
 				{
-					// prevent large objects from being copied, so hold a pointer instead.
-					max_val = &*it;
-					max_i = i;
+					for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+					{
+						if (*it > *max_val)
+						{
+							// prevent large objects from being copied, so hold a pointer instead.
+							max_val = &*it;
+							max_i = i + 1;
+						}
+
+						i++;
+					}
 				}
 
-				i++;
+				return max_i;
 			}
-
-			return max_i;
+			else
+				return SIZE_MAX;
+			
 		}
 
 
 		template<typename T>
 		inline T FixedQueueBase<T>::min(size_t offset)
 		{
-			return operator[](iOfMin(offset));
+			if (length() > offset)
+				return operator[](iOfMin(offset));
+			else if (std::numeric_limits<T>::is_specialized)
+			{
+				if (std::numeric_limits<T>::has_signaling_NaN)
+					return std::numeric_limits<T>::signaling_NaN();
+				else
+					return std::numeric_limits<T>::max();
+			}
+			else
+				return T(SIZE_MAX);
 		}
 		
 		template<typename T>
 		size_t FixedQueueBase<T>::iOfMin(size_t offset)
 		{
-			size_t i = 0;
-			size_t min_i = 0;
-			T* min_val = &*(begin() + offset);
-
-			for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+			if (length() > offset)
 			{
-				if (*it < *min_val)
-				{
-					// prevent large objects from being copied, so hold a pointer instead.
-					min_val = &*it;
-					min_i = i;
-				}
+				size_t i = 0;
+				size_t min_i = 0;
+				T* min_val = &*(begin() + offset);
 
-				i++;
+				if (begin() + offset != end())
+					for (FixedQueueIterator<T> it = begin() + 1 + offset; it != end(); it++)
+					{
+						if (*it < *min_val)
+						{
+							// prevent large objects from being copied, so hold a pointer instead.
+							min_val = &*it;
+							min_i = i;
+						}
+
+						i++;
+					}
+
+				return min_i;
 			}
-
-			return min_i;
+			else
+				return SIZE_MAX;
 		}
 
 		template<typename T>
@@ -303,8 +339,8 @@ namespace ADS
 
 			size_t diff = m_q_back - m_ptr;
 
-			// if the distance between the current pointer and the end of the queue memory is less than offset, it must cycle back to the start of the queue memory.
-			if (diff < offset)
+			// if the distance between the current pointer and the end of the queue memory is less than or equal to offset, it must cycle back to the start of the queue memory.
+			if (diff <= offset)
 				m_ptr = m_q_front + offset - diff;
 			else
 				m_ptr += offset;
@@ -504,7 +540,7 @@ namespace ADS
 	}
 }
 
-template<typename T, typename TVar>
+template<typename T, typename TVar> requires (!std::is_same_v<std::ostream, TVar>)
 void operator<<(TVar& target, ADS::Bases::FixedQueueBase<T>& queue)
 {
 	target = queue.front();

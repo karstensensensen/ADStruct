@@ -264,7 +264,7 @@ namespace ADS
 }
 
 // stores the front into target and pops the que
-template<typename T, typename TVar>
+template<typename T, typename TVar> requires (!std::is_same_v<std::ostream, TVar>)
 void operator<<(TVar& target, ADS::Bases::FixedQueueBase<T>& que);
 
 
