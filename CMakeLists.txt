@@ -7,9 +7,9 @@ set(CMAKE_CXX_STANDARD 20)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
 
-option(ADS_FIXED_QUE "enable FixedQueue data type" ON)
-option(ADS_BINARY_TREE "enable binary tree Node and SNode data types" ON)
-option(ADS_MEMORY_ARENA "enable MemoryArena data types" ON)
+option(ADS_FIXED_QUE "enable FixedQueue data type" OFF)
+option(ADS_BINARY_TREE "enable binary tree Node and SNode data types" OFF)
+option(ADS_MEMORY_ARENA "enable MemoryArena data types" OFF)
 
 set(FQUE_INCLUDE
     include/FixedQueue.h
