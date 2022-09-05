@@ -22,11 +22,27 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 get_target_property(SRC ${PROJECT_NAME} SOURCES)
 
-
+)
 target_include_directories(${PROJECT_NAME} PUBLIC INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
+# only generate library if non header only implementations are selected
+
+
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_SOURCE_DIR}/include
+    )
+else()
+
+add_library(${PROJECT_NAME} INTERFACE
+$<IF:$<BOOL:${ADS_FIXED_QUE}>,${FQUE_INCLUDE} ${FQUE_SRC}, >
+$<IF:$<BOOL:${ADS_BINARY_TREE}>,${BTREE_INCLUDE} ${BTREE_SRC}, >
 )
+
+target_include_directories(${PROJECT_NAME} INTERFACE
+${CMAKE_SOURCE_DIR}/include
+)
+endif()
 
 if(${ADS_FIXED_QUE})
     source_group("FixedQueue/Include" FILES ${FQUE_INCLUDE})
