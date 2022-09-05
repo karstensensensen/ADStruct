@@ -12,64 +12,24 @@ option(ADS_BINARY_TREE "enable binary tree Node and SNode data types" OFF)
 option(ADS_MEMORY_ARENA "enable MemoryArena data types" OFF)
 
 set(FQUE_INCLUDE
-    include/FixedQueue.h
+   "${CMAKE_CURRENT_SOURCE_DIR}/include/FixedQueue.h"
 )
 set(FQUE_SRC
-    src/FixedQueue.ipp
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/FixedQueue.ipp"
 )
 
-set(BTREE_INCLUDE
-    include/BinaryTree.h
-)
-set(BTREE_SRC
-    src/BinaryTree.ipp
-)
+add_library(${PROJECT_NAME} INTERFACE)
 
-set(MARENA_INCLUDE
-    include/Arena.h
-)
-set(MARENA_SRC
-    src/ModArena.cpp
-    src/ModArena.ipp
-    src/StaticArena.cpp 
-    src/StaticArena.ipp 
-    src/ArenaPtr.ipp 
-)
+get_target_property(SRC ${PROJECT_NAME} SOURCES)
 
-# only generate library if non header only implementations are selected
-if(${ADS_MEMORY_ARENA})
-    add_library(${PROJECT_NAME} STATIC
-        $<IF:$<BOOL:${ADS_FIXED_QUE}>,${FQUE_INCLUDE} ${FQUE_SRC}, >
-        $<IF:$<BOOL:${ADS_BINARY_TREE}>,${BTREE_INCLUDE} ${BTREE_SRC}, >
-        $<IF:$<BOOL:${ADS_MEMORY_ARENA}>,${MARENA_INCLUDE} ${MARENA_SRC}, >
-    )
 
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_SOURCE_DIR}/include
-    )
-else()
-
-add_library(${PROJECT_NAME} INTERFACE
-$<IF:$<BOOL:${ADS_FIXED_QUE}>,${FQUE_INCLUDE} ${FQUE_SRC}, >
-$<IF:$<BOOL:${ADS_BINARY_TREE}>,${BTREE_INCLUDE} ${BTREE_SRC}, >
-)
-
-target_include_directories(${PROJECT_NAME} INTERFACE
-${CMAKE_SOURCE_DIR}/include
+target_include_directories(${PROJECT_NAME} PUBLIC INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 endif()
 
 if(${ADS_FIXED_QUE})
     source_group("FixedQueue/Include" FILES ${FQUE_INCLUDE})
     source_group("FixedQueue/Src" FILES ${FQUE_SRC})
-endif()
-
-if(${ADS_BINARY_TREE})
-    source_group("BinaryTree/Include" FILES ${BTREE_INCLUDE})
-    source_group("BinaryTree/Src" FILES ${BTREE_SRC})
-endif()
-
-if(${ADS_BINARY_TREE})
-    source_group("MemoryArena/Include" FILES ${MARENA_INCLUDE})
-    source_group("MemoryArena/Src" FILES ${MARENA_SRC})
 endif()
