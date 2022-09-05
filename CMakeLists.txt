@@ -22,11 +22,9 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 get_target_property(SRC ${PROJECT_NAME} SOURCES)
 
-
 target_include_directories(${PROJECT_NAME} PUBLIC INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-)
+    "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 if(${ADS_FIXED_QUE})
     source_group("FixedQueue/Include" FILES ${FQUE_INCLUDE})
