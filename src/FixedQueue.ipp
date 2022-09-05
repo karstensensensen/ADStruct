@@ -97,7 +97,7 @@ namespace ADS
 			result.reserve(length());
 
 			for (const T& val : *this)
-				result.pushback((TCast)val);
+				result.push_back((TCast)val);
 
 			return result;
 		}
