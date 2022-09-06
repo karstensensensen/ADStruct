@@ -210,8 +210,8 @@ namespace ADS
 		FixedQueueIterator& operator--();
 		FixedQueueIterator operator--(int);
 
-		bool operator==(const FixedQueueIterator<T>& other);
-		bool operator!=(const FixedQueueIterator<T>& other);
+		bool operator==(const FixedQueueIterator<T>& other) const;
+		bool operator!=(const FixedQueueIterator<T>& other) const;
 
 		reference operator*();
 
@@ -249,10 +249,10 @@ namespace ADS
 		ConstFixedQueueIterator& operator--();
 		ConstFixedQueueIterator operator--(int);
 
-		bool operator==(const ConstFixedQueueIterator<T>& other);
-		bool operator!=(const ConstFixedQueueIterator<T>& other);
+		bool operator==(const ConstFixedQueueIterator<T>& other) const;
+		bool operator!=(const ConstFixedQueueIterator<T>& other) const;
 
-		reference operator*();
+		reference operator*() const;
 
 	protected:
 		pointer m_ptr;

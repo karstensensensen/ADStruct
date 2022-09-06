@@ -401,13 +401,13 @@ namespace ADS
 	}
 
 	template<typename T>
-	bool FixedQueueIterator<T>::operator==(const FixedQueueIterator<T>& other)
+	bool FixedQueueIterator<T>::operator==(const FixedQueueIterator<T>& other) const
 	{
 		return m_ptr == other.m_ptr && past_self;
 	}
 
 	template<typename T>
-	bool FixedQueueIterator<T>::operator!=(const FixedQueueIterator<T>& other)
+	bool FixedQueueIterator<T>::operator!=(const FixedQueueIterator<T>& other) const
 	{
 		return !(*this == other);
 	}
@@ -522,19 +522,19 @@ namespace ADS
 	}
 
 	template<typename T>
-	bool ConstFixedQueueIterator<T>::operator==(const ConstFixedQueueIterator<T>& other)
+	bool ConstFixedQueueIterator<T>::operator==(const ConstFixedQueueIterator<T>& other) const
 	{
 		return m_ptr == other.m_ptr && past_self;
 	}
 
 	template<typename T>
-	bool ConstFixedQueueIterator<T>::operator!=(const ConstFixedQueueIterator<T>& other)
+	bool ConstFixedQueueIterator<T>::operator!=(const ConstFixedQueueIterator<T>& other) const
 	{
 		return !(*this == other);
 	}
 
 	template<typename T>
-	typename ConstFixedQueueIterator<T>::reference ConstFixedQueueIterator<T>::operator*()
+	typename ConstFixedQueueIterator<T>::reference ConstFixedQueueIterator<T>::operator*() const
 	{
 		return *m_ptr;
 	}
