@@ -287,7 +287,7 @@ namespace ADS
 		}
 
 		std::swap(m_data, new_arr);
-		delete new_arr;
+		delete[] new_arr;
 
 		m_fixed_size = new_size;
 		// make sure the size of the queue is updated if it is shrunken
